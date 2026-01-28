@@ -84,6 +84,27 @@ export const configCommand = new Command('config')
         console.log(chalk.white(`   GEMINI_API_KEY: ${process.env.GEMINI_API_KEY ? 'Set' : 'Not set'}`));
         console.log(chalk.white(`   ANTHROPIC_API_KEY: ${process.env.ANTHROPIC_API_KEY ? 'Set' : 'Not set'}`));
         console.log();
+
+        // Check OAuth/CLI status
+        console.log(chalk.cyan('   Authentication Status:'));
+        try {
+          const { GeminiService } = await import('../services/gemini');
+          const gemini = new GeminiService();
+          const geminiAuth = await gemini.checkAuth();
+          console.log(chalk.white(`   Gemini: ${geminiAuth.method} - ${geminiAuth.status}`));
+        } catch (e: any) {
+          console.log(chalk.white(`   Gemini: Error - ${e.message}`));
+        }
+
+        try {
+          const { ClaudeService } = await import('../services/claude');
+          const claude = new ClaudeService();
+          const claudeAuth = await claude.checkAuth();
+          console.log(chalk.white(`   Claude: ${claudeAuth.method} - ${claudeAuth.status}`));
+        } catch (e: any) {
+          console.log(chalk.white(`   Claude: Error - ${e.message}`));
+        }
+        console.log();
         break;
 
       case 'init':
